@@ -1,0 +1,5 @@
+part /boot --source bootimg-biosplusefi --sourceparams="loader=grub-efi" --active --align 1024 --use-uuid
+part / --source rootfs --ondisk sda --fstype=ext4 --label rootfs --align 4 --size=1024 --use-uuid
+part swap --ondisk sda --size=128 --label swap1 --fstype=swap
+bootloader --ptable gpt --timeout=5 --append="rootfstype=ext4 console=ttyS3,115200"
+
