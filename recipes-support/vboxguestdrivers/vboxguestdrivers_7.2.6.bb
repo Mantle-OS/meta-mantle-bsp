@@ -2,7 +2,7 @@ SUMMARY = "VirtualBox Linux Guest Drivers"
 HOMEPAGE = "https://www.virtualbox.org/"
 SECTION = "core"
 LICENSE = "GPL-3.0-only"
-LIC_FILES_CHKSUM = "file://${UNPACKDIR}/${VBOX_NAME}/COPYING;md5=217590d3a513571b94632edf5fa1169a"
+LIC_FILES_CHKSUM = "file://${WORKDIR}/${VBOX_NAME}/COPYING;md5=217590d3a513571b94632edf5fa1169a"
 
 DEPENDS = "virtual/kernel"
 
@@ -17,9 +17,9 @@ SRC_URI = "http://download.virtualbox.org/virtualbox/${PV}/${VBOX_NAME}.tar.bz2 
 "
 SRC_URI[sha256sum] = "c58443a0e6fcc7fc7e84c1011a10823b3540c6a2b8f2e27c4d8971272baf09f7"
 
-S ?= "${UNPACKDIR}/vbox_module"
-S:task-unpack = "${UNPACKDIR}/${VBOX_NAME}"
-S:task-patch = "${UNPACKDIR}/${BP}"
+S ?= "${WORKDIR}/vbox_module"
+S:task-unpack = "${WORKDIR}/${VBOX_NAME}"
+S:task-patch = "${WORKDIR}/${BP}"
 
 export VBOX_KBUILD_TARGET_ARCH = "${ARCH}"
 export VBOX_KBUILD_TARGET_ARCH:x86-64 = "amd64"
@@ -34,14 +34,14 @@ do_export_sources[depends] += "virtual/kernel:do_shared_workdir"
 
 do_export_sources() {
     mkdir -p "${S}"
-    ${UNPACKDIR}/${VBOX_NAME}/src/VBox/Additions/linux/export_modules.sh ${T}/vbox_modules.tar.gz
+    ${WORKDIR}/${VBOX_NAME}/src/VBox/Additions/linux/export_modules.sh ${T}/vbox_modules.tar.gz
     tar -C "${S}" -xzf ${T}/vbox_modules.tar.gz
 
     # add a mount utility to use shared folder from VBox Addition Source Code
     mkdir -p "${S}/utils"
-    install ${UNPACKDIR}/${VBOX_NAME}/src/VBox/Additions/linux/sharedfolders/mount.vboxsf.c ${S}/utils
-    install ${UNPACKDIR}/${VBOX_NAME}/src/VBox/Additions/linux/sharedfolders/vbsfmount.c ${S}/utils
-    install ${UNPACKDIR}/Makefile.utils ${S}/utils/Makefile
+    install ${WORKDIR}/${VBOX_NAME}/src/VBox/Additions/linux/sharedfolders/mount.vboxsf.c ${S}/utils
+    install ${WORKDIR}/${VBOX_NAME}/src/VBox/Additions/linux/sharedfolders/vbsfmount.c ${S}/utils
+    install ${WORKDIR}/Makefile.utils ${S}/utils/Makefile
 
     # some kernel versions have issues with stdarg.h and compatibility with
     # the sysroot and libc-headers/uapi. If we include the file directly from
@@ -73,9 +73,9 @@ do_compile() {
 module_do_install() {
     MODULE_DIR=${D}${nonarch_base_libdir}/modules/${KERNEL_VERSION}/kernel/misc
     install -d $MODULE_DIR
-    install -m 644 vboxguest.ko $MODULE_DIR
-    install -m 644 vboxsf.ko $MODULE_DIR
-    install -m 644 vboxvideo.ko $MODULE_DIR
+    install -m 644 vboxguest.ko $MODULE_DIR/vboxguest-oracle.ko
+    install -m 644 vboxsf.ko $MODULE_DIR/vboxsf-oracle.ko
+    install -m 644 vboxvideo.ko $MODULE_DIR/vboxvideo-oracle.ko
 }
 
 do_install:append() {
@@ -83,10 +83,10 @@ do_install:append() {
     install -m 755 ${S}/utils/mount.vboxsf ${D}${base_sbindir}
 }
 
-PACKAGES += "kernel-module-vboxguest kernel-module-vboxsf kernel-module-vboxvideo"
-RRECOMMENDS:${PN} += "kernel-module-vboxguest kernel-module-vboxsf kernel-module-vboxvideo"
+PACKAGES += "kernel-module-vboxguest-oracle kernel-module-vboxsf-oracle kernel-module-vboxvideo-oracle"
+RRECOMMENDS:${PN} += "kernel-module-vboxguest-oracle kernel-module-vboxsf-oracle kernel-module-vboxvideo-oracle"
 
 FILES:${PN} = "${base_sbindir}"
 
 # autoload if installed
-KERNEL_MODULE_AUTOLOAD += "vboxguest vboxsf vboxvideo"
+KERNEL_MODULE_AUTOLOAD += "vboxguest-oracle vboxsf-oracle vboxvideo-oracle"

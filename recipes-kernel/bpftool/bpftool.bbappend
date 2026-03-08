@@ -1,3 +1,3 @@
-DEPENDS:appends = " \
+DEPENDS += " \
     openssl \
 "
