@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=f6b015e4f388d6e78adb1b1f9a887d06"
 
 DEPENDS = "glib-2.0 util-linux popt bison-native flex-native virtual/libiconv swig-native"
 
-SRC_URI = "git://git.efficios.com/babeltrace.git;branch=stable-2.1;protocol=https;tag=v${PV} \
+SRC_URI = "git://git.efficios.com/babeltrace.git;branch=stable-2.1;protocol=https \
            file://run-ptest \
            file://0001-Make-manpages-multilib-identical.patch \
            file://0001-tests-fix-test-applications-in-cpp-common.patch \
@@ -16,7 +16,8 @@ SRC_URI = "git://git.efficios.com/babeltrace.git;branch=stable-2.1;protocol=http
            file://external-python-tests.patch \
            file://0001-src-explicitly-only-build-shared-plugins.patch \
            "
-SRCREV = "d0e946a71faf5f0c2d7f1fb5b92a369983e9cf10"
+S = "${WORKDIR}/git"
+SRCREV = "fe2ecfdfda10b52e326aeb4f13ae566fc71a9e5b"
 UPSTREAM_CHECK_GITTAGREGEX = "v(?P<pver>2(\.\d+)+)$"
 
 inherit autotools pkgconfig ptest setuptools3-base
